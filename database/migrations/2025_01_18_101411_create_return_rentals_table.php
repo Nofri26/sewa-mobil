@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('rental_histories', function (Blueprint $table) {
+        Schema::create('return_rentals', function (Blueprint $table) {
             $table->id();
             $table->date('return_date');
             $table->smallInteger('days');
@@ -25,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('rental_histories');
+        Schema::dropIfExists('return_rentals');
     }
 };

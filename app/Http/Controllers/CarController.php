@@ -15,6 +15,7 @@ class CarController extends Controller
 {
     public function __construct(protected CarService $carService)
     {
+        //
     }
 
     /**
@@ -22,7 +23,7 @@ class CarController extends Controller
      */
     public function index(): Response
     {
-        $cars = $this->carService->getAllCars();
+        $cars = $this->carService->findAllWithPaginate(10);
         return Inertia::render('Cars/Index', [
             'cars' => CarResource::collection($cars)
         ]);
@@ -33,7 +34,7 @@ class CarController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Cars/Create');
+        return Inertia::render('Cars/Form');
     }
 
     /**

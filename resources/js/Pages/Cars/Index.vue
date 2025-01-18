@@ -9,7 +9,7 @@ import SelectInput from "@/Components/SelectInput.vue";
 import VSelect from 'vue-select';
 
 const { cars } = usePage().props;
-
+console.log(cars)
 const filters = ref({
   brand: '',
   model: '',

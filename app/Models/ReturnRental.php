@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class RentalHistory extends Model
+class ReturnRental extends Model
 {
     public $fillable = [
         'return_date',

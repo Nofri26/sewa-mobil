@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Repositories\CarRepository;
+use App\Repositories\CarRepositoryInterface;
+use App\Repositories\RentalRepository;
+use App\Repositories\RentalRepositoryInterface;
 use App\Services\CarService;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -13,9 +17,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(CarService::class, function ($app) {
-            return new CarService();
-        });
+        $this->app->bind(CarRepositoryInterface::class, CarRepository::class);
+        $this->app->bind(RentalRepositoryInterface::class, RentalRepository::class);
     }
 
     /**

@@ -3,17 +3,38 @@
 namespace App\Services;
 
 use App\Models\Car;
+use App\Models\Rental;
+use App\Repositories\CarRepository;
+use App\Repositories\CarRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 class CarService
 {
-    public function getAllCars(): Collection
+
+    public function __construct(protected CarRepositoryInterface $repository)
     {
-        return Car::all();
     }
 
-    public function createCar($data)
+    public function findAllWithPaginate(int $perPage): LengthAwarePaginator
     {
-        return Car::query()->create($data);
+        return $this->repository->findAllWithPaginate($perPage);
+    }
+
+    public function getAvailableCars(): array
+    {
+        return $this->repository->findBy(['is_available' => true]);
+    }
+
+    public function createCar(array $data): Car
+    {
+        $car = new Car($data);
+        return $this->repository->save($car);
+    }
+
+    public function updateAvailableCar(Rental $rental, bool $is_available): Car
+    {
+        $id = $rental['car_id'];
+        return $this->repository->updateAvailableCar($id, $is_available);
     }
 }

@@ -45,6 +45,12 @@ const showingNavigationDropdown = ref(false);
                 >
                   Cars
                 </NavLink>
+                <NavLink
+                    :href="route('rentals.index')"
+                    :active="route().current('rentals.index')"
+                >
+                  Rentals
+                </NavLink>
               </div>
             </div>
 
@@ -151,6 +157,18 @@ const showingNavigationDropdown = ref(false);
                 :active="route().current('dashboard')"
             >
               Dashboard
+            </ResponsiveNavLink>
+            <ResponsiveNavLink
+                :href="route('cars.index')"
+                :active="route().current('cars.index')"
+            >
+              Cars
+            </ResponsiveNavLink>
+            <ResponsiveNavLink
+                :href="route('rentals.index')"
+                :active="route().current('rentals.index')"
+            >
+              Rentals
             </ResponsiveNavLink>
           </div>
 

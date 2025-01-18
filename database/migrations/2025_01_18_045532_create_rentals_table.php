@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->date('start')->default(now());
             $table->date('end');
-            $table->enum('status', ['rented', 'available'])->default('available');
+            $table->enum('status', ['rented', 'completed'])->default('rented');
             $table->decimal('cost', 10, 2);
             $table->foreignId('car_id')->constrained('cars');
             $table->foreignId('created_by_id')->constrained('users');
