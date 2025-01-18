@@ -6,22 +6,32 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import TextareaInput from "@/Components/TextareaInput.vue";
+import SelectInput from "@/Components/SelectInput.vue";
+import VSelect from 'vue-select';
 
 const form = useForm({
   name: '',
-  no_telp: '',
-  alamat: '',
-  no_sim: '',
+  address: '',
+  phone_number: '',
+  sim_number: '',
+  role: '',
   email: '',
   password: '',
   password_confirmation: '',
 });
 
+const roles = [
+  { label: 'Admin', value: 'admin' },
+  { label: 'User', value: 'user' },
+]
+
 const submit = () => {
+  form.role = form.role.value;
   form.post(route('register'), {
     onFinish: () => form.reset('password', 'password_confirmation'),
   });
 };
+
 </script>
 
 <template>
@@ -45,51 +55,62 @@ const submit = () => {
         <InputError class="mt-2" :message="form.errors.name"/>
       </div>
       <div class="mt-4">
-        <InputLabel for="no_telp" value="No Telepon"/>
+        <InputLabel for="address" value="Alamat"/>
+
+        <TextareaInput
+            id="address"
+            type="text"
+            class="mt-1 block w-full"
+            v-model="form.address"
+            required
+            autocomplete="address"
+        />
+
+        <InputError class="mt-2" :message="form.errors.address"/>
+      </div>
+      <div class="mt-4">
+        <InputLabel for="phone_number" value="No Telepon"/>
 
         <div class="flex justify-center items-center gap-2">
           <TextInput
-              id="no_telp"
+              id="phone_number"
               type="text"
               class="mt-1 block w-full"
-              v-model="form.no_telp"
+              v-model="form.phone_number"
               required
-              autocomplete="no_telp"
+              autocomplete="phone_number"
           />
         </div>
 
-        <InputError class="mt-2" :message="form.errors.no_telp"/>
+        <InputError class="mt-2" :message="form.errors.phone_number"/>
       </div>
       <div class="mt-4">
-        <InputLabel for="alamat" value="Alamat"/>
-
-        <TextareaInput
-            id="alamat"
-            type="text"
-            class="mt-1 block w-full"
-            v-model="form.alamat"
-            required
-            autocomplete="alamat"
-        />
-
-        <InputError class="mt-2" :message="form.errors.alamat"/>
-      </div>
-
-      <div class="mt-4">
-        <InputLabel for="no_sim" value="No Sim"/>
+        <InputLabel for="sim_number" value="No Sim"/>
 
         <TextInput
-            id="no_sim"
+            id="sim_number"
             type="text"
             class="mt-1 block w-full"
-            v-model="form.no_sim"
+            v-model="form.sim_number"
             required
-            autocomplete="no_sim"
+            autocomplete="sim_number"
         />
 
-        <InputError class="mt-2" :message="form.errors.no_sim"/>
+        <InputError class="mt-2" :message="form.errors.sim_number"/>
       </div>
+      <div class="mt-4">
+        <InputLabel for="role" value="Role"/>
 
+        <v-select
+            :options="roles"
+            label="label"
+            item-value="value"
+            v-model="form.role"
+            required
+        />
+
+        <InputError class="mt-2" :message="form.errors.role"/>
+      </div>
       <div class="mt-4">
         <InputLabel for="email" value="Email"/>
 
@@ -104,7 +125,6 @@ const submit = () => {
 
         <InputError class="mt-2" :message="form.errors.email"/>
       </div>
-
       <div class="mt-4">
         <InputLabel for="password" value="Password"/>
 
@@ -119,7 +139,6 @@ const submit = () => {
 
         <InputError class="mt-2" :message="form.errors.password"/>
       </div>
-
       <div class="mt-4">
         <InputLabel
             for="password_confirmation"

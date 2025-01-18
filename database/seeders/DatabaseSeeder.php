@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Enum\User\Roles;
 use App\Models\User;
+
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,9 +19,10 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'name' => 'Admin',
-            'no_telp' => '+628123456789',
-            'alamat' => 'Kiaracondong, Bandung',
-            'no_sim' => '123456789012',
+            'address' => 'Kiaracondong, Bandung',
+            'phone_number' => '+628123456789',
+            'sim_number' => '123456789012',
+            'role' => Roles::ADMIN,
             'email' => 'admin@admin.com',
         ]);
     }

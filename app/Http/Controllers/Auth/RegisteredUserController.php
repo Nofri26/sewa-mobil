@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enum\User\Roles;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -26,24 +28,35 @@ class RegisteredUserController extends Controller
     /**
      * Handle an incoming registration request.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'no_telp' => ['required', 'numeric', 'digits_between:10,12'],
-            'alamat' => 'required|string|max:255',
-            'no_sim' => 'required|numeric|digits_between:10,12',
+            'address' => 'required|string|max:255',
+            'phone_number' => ['required', 'numeric', 'digits_between:9,15'],
+            'sim_number' => 'required|numeric|digits_between:10,50',
+            'role' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    $validRoles = array_map(fn ($role) => $role->value, Roles::cases());
+                    if (!in_array($value, $validRoles)) {
+                        $fail("The selected {$attribute} is invalid.");
+                    }
+                },
+            ],
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
-            'no_telp' => $request->no_telp,
-            'alamat' => $request->alamat,
-            'no_sim' => $request->no_sim,
+            'address' => $request->address,
+            'phone_number' => $request->phone_number,
+            'sim_number' => $request->sim_number,
+            'role' => $request->role,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
