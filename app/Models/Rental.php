@@ -26,4 +26,9 @@ class Rental extends Model
     {
         return $this->hasMany(ReturnRental::class);
     }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by_id');
+    }
 }

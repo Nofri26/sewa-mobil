@@ -9,6 +9,14 @@ use Illuminate\Database\Eloquent\Collection;
 class CarRepository implements CarRepositoryInterface
 {
     /**
+     * @return Collection
+     */
+    public function getAll(): Collection
+    {
+        return Car::query()->with('rentals')->get();
+    }
+
+    /**
      * @param int $perPage
      * @return LengthAwarePaginator
      */
@@ -28,11 +36,11 @@ class CarRepository implements CarRepositoryInterface
 
     /**
      * @param array $conditions
-     * @return array
+     * @return Collection
      */
-    public function findBy(array $conditions): array
+    public function findBy(array $conditions): Collection
     {
-        return Car::query()->where($conditions)->get()->toArray();
+        return Car::query()->with('rentals')->where($conditions)->get();
     }
 
     /**

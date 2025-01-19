@@ -16,14 +16,24 @@ class CarService
     {
     }
 
+    public function getAll(): Collection
+    {
+        return $this->repository->getAll();
+    }
+
     public function findAllWithPaginate(int $perPage): LengthAwarePaginator
     {
         return $this->repository->findAllWithPaginate($perPage);
     }
 
-    public function getAvailableCars(): array
+    public function findAvailableCars(): Collection
     {
-        return $this->repository->findBy(['is_available' => true]);
+        return $this->repository->findBy(['is_available' => false]);
+    }
+
+    public function findBy(array $condition): Collection
+    {
+        return $this->repository->findBy($condition);
     }
 
     public function createCar(array $data): Car

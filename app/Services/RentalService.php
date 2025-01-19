@@ -3,13 +3,12 @@
 namespace App\Services;
 
 use App\Enum\Rental\Status;
-use App\Models\Car;
 use App\Models\Rental;
 use App\Models\ReturnRental;
 use App\Repositories\RentalRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Carbon;
 
 class RentalService
 {
@@ -22,6 +21,11 @@ class RentalService
         return $this->repository->findAllWithPaginate($perPage);
     }
 
+    public function findByWithPaginate(array $condition, int $perPage): LengthAwarePaginator
+    {
+        return $this->repository->findByWithPaginate($condition, $perPage);
+    }
+
     public function createRental(array $data): Rental
     {
         $rental = new Rental($data);
@@ -29,14 +33,34 @@ class RentalService
         return $this->repository->save($rental);
     }
 
-    public function createReturnRental(array $data): ReturnRental
+    public function findBy(array $condition): Collection
     {
-        $rental = $data['rental'];
+        return $this->repository->findBy($condition);
+    }
+
+    public function searchByPlateNumber(int $user_id, string $plateNumber): Rental
+    {
+        $car = $this->carService->findBy([
+            'plate_number' => $plateNumber,
+            'is_available' => false,
+        ]);
+        $rental = $this->repository->findBy([
+            'car_id' => $car[0]['id'],
+            'created_by_id' => $user_id,
+            'status' => Status::RENTED
+        ]);
+        return $rental[0];
+    }
+
+    public function createReturnRental(Rental $rental): ReturnRental
+    {
+        $rental['status'] = Status::COMPLETED;
+        $this->repository->save($rental);
 
         $returnRentalData = [
             'rental_id' => $rental['id'],
-            'return_date' => Date::now(),
-            'days' => $rental['end']->diffInDays($rental['start']),
+            'return_date' => Carbon::now(),
+            'days' => Carbon::parse($rental['start'])->diffInDays(Carbon::parse($rental['end'])),
             'cost' => $rental['cost'],
         ];
 

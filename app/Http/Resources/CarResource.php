@@ -23,6 +23,7 @@ class CarResource extends JsonResource
             'formatted_daily_rate' => 'Rp,' . number_format($this->daily_rate, 0, ',', '.'),
             'is_available' => $this->is_available,
             'created_by' => $this->createdBy->name,
+            'rentals' => $this->rentals
         ];
     }
 }

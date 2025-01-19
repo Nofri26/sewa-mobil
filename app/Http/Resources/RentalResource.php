@@ -19,8 +19,10 @@ class RentalResource extends JsonResource
             'start' => date("d F, Y", strtotime($this->start)),
             'end' => date("d F, Y", strtotime($this->end)),
             'cost' => $this->cost,
+            'formated_cost' => 'Rp ' . number_format($this->cost, 0, ',', '.'),
             'status' => $this->status,
-            'car' => $this->car->brand . ' ' . $this->car->model,
+            'car' => $this->car,
+            'tenant' => $this->createdBy
         ];
     }
 }

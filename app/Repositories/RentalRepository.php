@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Rental;
 use App\Models\ReturnRental;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class RentalRepository implements RentalRepositoryInterface
 {
@@ -15,7 +16,7 @@ class RentalRepository implements RentalRepositoryInterface
      */
     public function findAllWithPaginate(int $perPage): LengthAwarePaginator
     {
-        return Rental::query()->paginate($perPage);
+        return Rental::query()->with('createdBy')->paginate($perPage);
     }
 
     /**
@@ -24,16 +25,16 @@ class RentalRepository implements RentalRepositoryInterface
      */
     public function findById(int $id): ?Rental
     {
-        return Rental::query()->with('')->find($id);
+        return Rental::query()->find($id);
     }
 
     /**
      * @param array $conditions
-     * @return array
+     * @return Collection
      */
-    public function findBy(array $conditions): array
+    public function findBy(array $conditions): Collection
     {
-        return Rental::query()->where($conditions)->get()->toArray();
+        return Rental::query()->where($conditions)->get();
     }
 
     /**
@@ -63,5 +64,18 @@ class RentalRepository implements RentalRepositoryInterface
     {
         $rental = $this->findById($id);
         $rental->delete();
+    }
+
+    /**
+     * @param array $conditions
+     * @param int $perPage
+     * @return LengthAwarePaginator
+     */
+    public function findByWithPaginate(array $conditions, int $perPage): LengthAwarePaginator
+    {
+        return Rental::query()
+            ->with('createdBy')
+            ->where($conditions)
+            ->paginate($perPage);
     }
 }

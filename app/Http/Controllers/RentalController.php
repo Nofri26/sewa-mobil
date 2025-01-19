@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\User\Roles;
+use App\Http\Requests\SearchRentalRequest;
 use App\Http\Requests\StoreRentalRequest;
 use App\Http\Requests\UpdateRentalRequest;
+use App\Http\Resources\CarResource;
 use App\Http\Resources\RentalResource;
-use App\Models\Car;
 use App\Models\Rental;
+use App\Models\User;
 use App\Services\CarService;
 use App\Services\RentalService;
 use Illuminate\Http\RedirectResponse;
@@ -25,9 +28,27 @@ class RentalController extends Controller
      */
     public function index(): Response
     {
-        $rentals = $this->rentalService->findAllWithPaginate(10);
+        if (auth()->user()->role === Roles::ADMIN) {
+            $rentals = $this->rentalService->findAllWithPaginate(10);
+        } else {
+            $rentals = $this->rentalService->findByWithPaginate(['created_by_id' => auth()->user()->id], 10);
+        }
         return Inertia::render('Rentals/Index', [
             'rentals' => RentalResource::collection($rentals),
+            'users' => User::all()
+        ]);
+    }
+
+    /**
+     * @param SearchRentalRequest $request
+     * @return Response
+     */
+    public function search(SearchRentalRequest $request): Response
+    {
+        $data = $request->validated();
+        $rental = $this->rentalService->searchByPlateNumber($data['user_id'], $data['plate_number']);
+        return Inertia::render('Rentals/Show', [
+            'rental' => new RentalResource($rental),
         ]);
     }
 
@@ -37,7 +58,8 @@ class RentalController extends Controller
     public function create(): Response
     {
         return Inertia::render('Rentals/Form', [
-            'cars' => $this->carService->getAvailableCars()
+            'cars' => CarResource::collection($this->carService->getAll()),
+            'users' => User::all()
         ]);
     }
 
@@ -57,7 +79,7 @@ class RentalController extends Controller
     public function show(Rental $rental): Response
     {
         return Inertia::render('Rentals/Show', [
-            'rental' => $rental
+            'rental' => new RentalResource($rental),
         ]);
     }
 
@@ -72,9 +94,10 @@ class RentalController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRentalRequest $request, Rental $rental)
+    public function update(UpdateRentalRequest $request, Rental $rental): RedirectResponse
     {
-        //
+        $this->rentalService->createReturnRental($rental);
+        return redirect()->route('rentals.index');
     }
 
     /**

@@ -9,7 +9,12 @@ import SelectInput from "@/Components/SelectInput.vue";
 import VSelect from 'vue-select';
 
 const { cars } = usePage().props;
-console.log(cars)
+const pages = usePage();
+
+const isAdmin = () => {
+  return pages.props.auth?.user?.role === "admin";
+};
+
 const filters = ref({
   brand: '',
   model: '',
@@ -52,36 +57,31 @@ const handleBtnCreate = () => {
       <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
           <div class="p-6 text-gray-900">
-            <div class="flex items-center justify-between">
+            <div class="flex justify-between mt-1 ">
               <div class="flex space-x-4">
-                <!-- Filter by Brand -->
                 <TextInput
                     v-model="filters.brand"
                     type="text"
                     placeholder="Filter by Brand"
-                    class="px-4 py-2 border rounded"
                 />
-
-                <!-- Filter by Model -->
                 <TextInput
                     v-model="filters.model"
                     type="text"
                     placeholder="Filter by Model"
-                    class="px-4 py-2 border rounded"
                 />
-                <!-- Filter by Availability -->
                 <select
                     v-model="filters.is_available"
                     class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                 >
                   <option value="" disabled selected>Select Availability</option>
-
                   <option value="1">Available</option>
                   <option value="0">Not Available</option>
                 </select>
 
               </div>
-              <PrimaryButton @click="handleBtnCreate">Create</PrimaryButton>
+              <div class="flex items-start justify-end">
+                <PrimaryButton v-if="isAdmin()" @click="handleBtnCreate">Create</PrimaryButton>
+              </div>
             </div>
             <table class="min-w-full table-auto border-collapse border border-gray-200 mt-4">
               <thead>

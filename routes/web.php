@@ -20,6 +20,7 @@ Route::get('/dashboard', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('cars', Controllers\CarController::class);
+    Route::get('/rentals/search', [Controllers\RentalController::class, 'search'])->name('rentals.search');
     Route::resource('rentals', Controllers\RentalController::class);
 });
 
